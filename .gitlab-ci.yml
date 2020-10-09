@@ -1,0 +1,40 @@
+image: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-capsule:$INFRA_BASE_IMAGE_TAG
+
+variables:
+  # You should create your own ECR repository for storing images of your builds
+  APP_REPOSITORY_URL: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-service-images
+  APP_IMAGE_URL: $APP_REPOSITORY_URL:pb-blueprint-ruby
+
+include:
+  - local: ".gitlab/build.yml"
+  - local: ".gitlab/test.yml"
+  - local: ".gitlab/deploy.yml"
+
+# TODO: add all necessary stages
+stages:
+  - build
+  - test
+  # TODO: tweak master VS branch deployment
+  - deploy
+  # - deploy-staging
+  # - deploy-prod
+  # - child-pipelines
+
+# Child pipelines
+
+# Example: external project child pipeline
+# external-child-pipeline:
+#   stage: child-pipelines
+#   trigger:
+#     project: "productboard/pb-toolkit"
+#     branch: master
+
+# Example: local child pipeline
+# local-child-pipeline:
+#   stage: child-pipelines
+#   variables:
+#     MY_VAR: $MY_VAR_VALUE
+#   trigger:
+#     include:
+#       - local: /.gitlab/child-pipelines/child-pipeline.yml
+#     strategy: depend

@@ -1,0 +1,11 @@
+test:
+  stage: test
+  needs:
+    - build
+  environment: staging
+  # Use the image build by this pipeline
+  image: $APP_IMAGE_URL-$CI_COMMIT_SHA
+  script:
+    # Add test dependencies on top of the production image
+    - bundle install --with=test
+    - rspec

@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: "{{ include "pb-blueprint-ruby.name" . }}"
+  labels:
+    {{- include "helm.selectorLabels" . | nindent 4 }}    # Presence of `app` label is required (defined in our infra).
+spec:
+  endpoints:
+  - interval: 10s
+    port: metrics     # It must match `port.name` in `Service`.
+    path: /metrics    # It must match endpoint in the application.
+    scrapeTimeout: 10s
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}   # It must match `labels` in `Service`.

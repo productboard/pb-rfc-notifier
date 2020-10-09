@@ -1,0 +1,29 @@
+deploy:
+  stage: deploy
+  # only:
+  #   - master
+  variables:
+    # CI_DEBUG_TRACE: "false"
+    KUBE_NS: pb-blueprint-ruby
+  environment: staging
+  script:
+    # TODO: add gettext to pb-capsule
+    # - apk add gettext
+    # autoinjects all ENV vars into the file from GitLab CI Settings
+    # - envsubst < "charts/pb-backend/env-vars.yaml.template" > "charts/pb-backend/env-vars.yaml"
+    # - export KUBE_NS=pb-blueprint-ruby
+    - kubectl create namespace $KUBE_NS || true
+    # - init_helm
+    # check for correctness before upgrading
+    - helm lint ./charts/pb-blueprint-ruby
+    - helm init --client-only
+    - helm repo update
+    - helm upgrade pb-blueprint-ruby ./charts/pb-blueprint-ruby
+      --install
+      --force
+      --reset-values
+      --wait --timeout 300
+      --namespace $KUBE_NS
+      -f ./charts/pb-blueprint-ruby/values.yaml
+      # --set-string global.image.tag=backend-$CI_COMMIT_SHORT_SHA
+      # --set global.env.AWS_PR_APP=false
