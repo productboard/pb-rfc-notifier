@@ -27,7 +27,7 @@ const main = async () => {
       message: `Hey everyone! Great news! New RFC is available! Check out *"<${url}|${title}>"* right away!`,
     });
 
-    logger.info(`Notification send for ${id}`);
+    logger.info(`notification sent for ${id}`);
   };
 
   schedule(() => {
@@ -41,7 +41,7 @@ const main = async () => {
 
 main()
   .then(() => logger.info('app is running!'))
-  .catch(() => logger.error('fatal error'));
+  .catch(() => logger.error('fatal error!'));
 
 const healthMessage = {
   status: 'ok',
