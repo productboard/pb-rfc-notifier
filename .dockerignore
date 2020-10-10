@@ -1,0 +1,14 @@
+# Ignore everything
+*
+
+# Allow files and directories
+!/node_modules/*
+!/dist/*
+!/src/*
+
+!/package.json
+!/jest.config.js
+!/babel.config.js
+!/tsconfig.json
+!/.eslintrc
+!/.eslintignore

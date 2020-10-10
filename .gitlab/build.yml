@@ -1,26 +1,14 @@
 build:
-  cache: {}
   stage: build
-  # only:
-  #   - master
-  # tags:
-  #   - heavy-runner
-  variables:
-    # POSTGRES_DB: build_db
-  environment: staging
   image:
     name: gcr.io/kaniko-project/executor:debug-v0.24.0
-    entrypoint: [""]
+    entrypoint: ['']
   script:
-    # points kaniko to our ECR endpoint
     - echo "{\"credHelpers\":{\"843222783279.dkr.ecr.us-east-1.amazonaws.com\":\"ecr-login\"}}" > /kaniko/.docker/config.json
-    # TODO: config ECR for cache
-      # --cache=true
-    # https://github.com/GoogleContainerTools/kaniko
     - /kaniko/executor
+      --cache=true
+      --cache-repo=$APP_REPOSITORY_URL
       --context $CI_PROJECT_DIR
       --dockerfile $CI_PROJECT_DIR/Dockerfile
       --destination $APP_IMAGE_URL
       --destination $APP_IMAGE_URL-$CI_COMMIT_SHA
-      # --build-arg DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB
-      # --build-arg REDIS_URL=redis://localhost:6379/0

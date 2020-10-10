@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "noImplicitAny": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "target": "ES2019",
+    "lib": ["ES2019"]
+  },
+  "include": ["src/**/*", "jest.config.js", "babel.config.js"],
+  "exclude": ["node_modules", "**/__mocks__"]
+}
