@@ -9,12 +9,10 @@ test:
   <<: *test-default
   script:
     - cd /usr/src/app
-    - ls -l
     - yarn test
 
 lint:
   <<: *test-default
   script:
     - cd /usr/src/app
-    - ls -l
     - yarn lint
