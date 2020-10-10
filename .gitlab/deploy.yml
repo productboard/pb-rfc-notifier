@@ -1,29 +1,24 @@
 deploy:
   stage: deploy
-  # only:
-  #   - master
+  only:
+    - master
   variables:
-    # CI_DEBUG_TRACE: "false"
-    KUBE_NS: pb-blueprint-ruby
-  environment: staging
+    KUBE_NS: default
+  environment: production
   script:
-    # TODO: add gettext to pb-capsule
-    # - apk add gettext
-    # autoinjects all ENV vars into the file from GitLab CI Settings
-    # - envsubst < "charts/pb-backend/env-vars.yaml.template" > "charts/pb-backend/env-vars.yaml"
-    # - export KUBE_NS=pb-blueprint-ruby
     - kubectl create namespace $KUBE_NS || true
-    # - init_helm
-    # check for correctness before upgrading
-    - helm lint ./charts/pb-blueprint-ruby
+    - helm lint ./charts/pb-rfc-notifier
     - helm init --client-only
     - helm repo update
-    - helm upgrade pb-blueprint-ruby ./charts/pb-blueprint-ruby
+    - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
       --install
       --force
       --reset-values
       --wait --timeout 300
       --namespace $KUBE_NS
-      -f ./charts/pb-blueprint-ruby/values.yaml
-      # --set-string global.image.tag=backend-$CI_COMMIT_SHORT_SHA
-      # --set global.env.AWS_PR_APP=false
+      -f ./charts/pb-rfc-notifier/values.yaml
+      --set extraEnv.NOTION_BASE=$NOTION_BASE
+      --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
+      --set extraEnv.NOTION_API=$NOTION_API
+      --set extraEnv.NOTION_COLLECTION=$NOTION_COLLECTION
+      --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW

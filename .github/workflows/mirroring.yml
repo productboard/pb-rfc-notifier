@@ -1,0 +1,14 @@
+name: Mirroring
+
+on: push
+
+jobs:
+  gitlab:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: productboard/git-push-branch-action@v1.3.0
+        with:
+          # https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
+          ssh_private_key: ${{ secrets.GITLAB_MIRRORING_KEY }}
+          target_repo_url: git@gitlab.com:productboard/pb-rfc-notifier.git

@@ -1,11 +1,20 @@
-test:
+.test-default: &test-default
   stage: test
-  needs:
-    - build
-  environment: staging
+  variables:
+    GIT_STRATEGY: none
   # Use the image build by this pipeline
   image: $APP_IMAGE_URL-$CI_COMMIT_SHA
+
+test:
+  <<: *test-default
   script:
-    # Add test dependencies on top of the production image
-    - bundle install --with=test
-    - rspec
+    - cd /usr/src/app
+    - ls -l
+    - yarn test
+
+lint:
+  <<: *test-default
+  script:
+    - cd /usr/src/app
+    - ls -l
+    - yarn lint
