@@ -93,7 +93,7 @@ export const checkForNewDocument = async ({
   getDocuments,
   callback,
 }: TCheckForNewDocument): Promise<void> => {
-  logger.info(`Checking for new documents...`);
+  logger.info(`checking for new documents...`);
 
   const { ids, documents } = await getDocuments();
 
@@ -104,7 +104,7 @@ export const checkForNewDocument = async ({
   newDocuments.forEach(({ id, title }) => {
     database.add(id);
 
-    logger.info(`New document: ${title}`);
+    logger.info(`new document: ${title}`);
 
     callback({ id, title });
   });

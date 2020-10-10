@@ -8,6 +8,10 @@ import { schedule } from './cron';
 import { notify } from './slack';
 import { logger } from './logger';
 
+// $url and $title will be replaced
+const MESSAGE_TEMPLATE =
+  'Hey everyone! Great news! New RFC is available! Check out *"<$url|$title>"* right away!';
+
 const bootstrapDatabase = async () => {
   const { ids } = await getAllDocuments();
   const database = initDatabase(ids);
@@ -15,20 +19,20 @@ const bootstrapDatabase = async () => {
   return database;
 };
 
-const main = async () => {
+const sendMessage: Parameters<
+  typeof checkForNewDocument
+>['0']['callback'] = async ({ id, title }) => {
+  const url = getURLforDocument(id);
+
+  await notify({
+    message: MESSAGE_TEMPLATE.replace('$url', url).replace('$title', title),
+  });
+
+  logger.info(`notification sent for ${id}`);
+};
+
+const run = async () => {
   const database = await bootstrapDatabase();
-
-  type Callback = Parameters<typeof checkForNewDocument>['0']['callback'];
-
-  const sendMessage: Callback = async ({ id, title }) => {
-    const url = getURLforDocument(id);
-
-    await notify({
-      message: `Hey everyone! Great news! New RFC is available! Check out *"<${url}|${title}>"* right away!`,
-    });
-
-    logger.info(`Notification send for ${id}`);
-  };
 
   schedule(() => {
     void checkForNewDocument({
@@ -39,9 +43,9 @@ const main = async () => {
   });
 };
 
-main()
+run()
   .then(() => logger.info('app is running!'))
-  .catch(() => logger.error('fatal error'));
+  .catch(() => logger.error('fatal error!'));
 
 const healthMessage = {
   status: 'ok',
