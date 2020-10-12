@@ -2,7 +2,7 @@ image: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-capsule:$INF
 
 variables:
   # You should create your own ECR repository for storing images of your builds
-  APP_REPOSITORY_URL: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-service-images
+  APP_REPOSITORY_URL: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-rfc-notifier
   APP_IMAGE_URL: $APP_REPOSITORY_URL:pb-rfc-notifier
   # see Readme.md
   NOTION_BASE: https://www.notion.so/productboard/
