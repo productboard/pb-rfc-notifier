@@ -7,7 +7,7 @@ import {
   NOTION_COLLECTION_VIEW,
 } from './environment';
 import { initDatabase } from './database';
-import { Values } from './types';
+import { Await, Values } from './types';
 
 const api = new NotionAPI({
   authToken: NOTION_API,
@@ -24,10 +24,18 @@ type Documents = {
 };
 
 export const getAllDocuments = async (): Promise<Documents> => {
-  const collectionData = await api.getCollectionData(
-    NOTION_COLLECTION,
-    NOTION_COLLECTION_VIEW
-  );
+  let collectionData: Await<ReturnType<typeof api.getCollectionData>>;
+
+  try {
+    collectionData = await api.getCollectionData(
+      NOTION_COLLECTION,
+      NOTION_COLLECTION_VIEW
+    );
+  } catch (e) {
+    logger.error(`notion-client failed to get data`);
+
+    throw Error('notion-client failed');
+  }
 
   if (!collectionData.result) {
     logger.error(`collection not found or you don't have permissions!`);
@@ -59,16 +67,22 @@ export const getAllDocuments = async (): Promise<Documents> => {
     };
   };
 
-  const normalizedDocuments = ids.map(getDocument).reduce((acc, val) => {
-    if (!val.title) {
-      logger.debug(`${val.id} has no title`);
+  let normalizedDocuments: Record<string, ReturnType<typeof getDocument>> = {};
+
+  try {
+    normalizedDocuments = ids.map(getDocument).reduce((acc, val) => {
+      if (!val.title) {
+        logger.debug(`${val.id} has no title`);
+        return acc;
+      }
+
+      acc[val.id] = val;
+
       return acc;
-    }
-
-    acc[val.id] = val;
-
-    return acc;
-  }, {} as { [key: string]: ReturnType<typeof getDocument> });
+    }, {} as { [key: string]: ReturnType<typeof getDocument> });
+  } catch (e) {
+    logger.error('getting normalizedDocuments failed');
+  }
 
   return {
     ids: Object.keys(normalizedDocuments),
