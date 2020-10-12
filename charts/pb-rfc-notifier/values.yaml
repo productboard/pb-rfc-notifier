@@ -5,15 +5,15 @@
 replicaCount: 1
 
 image:
-  repository: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-service-images
+  repository: 843222783279.dkr.ecr.us-east-1.amazonaws.com/productboard/pb-rfc-notifier
   tag: pb-rfc-notifier
   # pullPolicy: IfNotPresent
   # force reload the image all the time
   pullPolicy: Always
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: ''
+fullnameOverride: ''
 
 service:
   type: ClusterIP
@@ -25,19 +25,20 @@ ingress:
   annotations:
     # Reference: https://docs.traefik.io/v1.7/user-guide/kubernetes/#specifying-routing-priorities
     kubernetes.io/ingress.class: traefik-info
-    traefik.ingress.kubernetes.io/priority: "1"
+    traefik.ingress.kubernetes.io/priority: '1'
   hosts:
-    - host: "pb-rfc-notifier.productboard.info"
+    - host: 'pb-rfc-notifier.productboard.info'
       # internal cluster traffic runs without TLS
       port: 80
-      paths: ["/"]
+      paths: ['/']
 
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources:
+  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
