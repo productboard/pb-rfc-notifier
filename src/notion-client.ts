@@ -24,6 +24,96 @@ type Documents = {
   };
 };
 
+type NotionCollectionData = Await<ReturnType<typeof api.getCollectionData>>;
+type NotionBlockProperties = {
+  [key: string]: Array<string> | undefined;
+};
+type NotionDocument = {
+  id: string;
+  title: string;
+  otherFields: { [key: string]: string };
+};
+
+const normalizeProperties = (properties: NotionBlockProperties) =>
+  Object.entries(properties).reduce(
+    (acc, [key, value]) => {
+      const normalizedValue = value?.flat()[0];
+      if (!normalizedValue) {
+        return acc;
+      }
+
+      if (key === 'title') {
+        acc.title = normalizedValue;
+
+        return acc;
+      }
+
+      acc.otherFields[key] = normalizedValue;
+
+      return acc;
+    },
+    { otherFields: {}, title: '' } as {
+      otherFields: { [key: string]: string };
+      title: string;
+    }
+  );
+
+const normalizeDocuments = (
+  ids: NotionCollectionData['result']['blockIds'],
+  collectionData: NotionCollectionData
+) => {
+  const getDocument = getDocumentFactory(collectionData);
+
+  return ids.map(getDocument).reduce((acc, val) => {
+    if (!val) {
+      logger.info(`some document has no title or other fields`);
+      return acc;
+    }
+
+    // filter out documents we don't want to watch for, kinda naive but it works
+    if (
+      NOTION_COLLECTION_FILTER &&
+      !Object.values(val['otherFields']).includes(NOTION_COLLECTION_FILTER)
+    ) {
+      return acc;
+    }
+
+    acc[val.id] = val;
+
+    return acc;
+  }, {} as { [key: string]: Document });
+};
+
+const getDocumentFactory = (collectionData: NotionCollectionData) => (
+  id: string
+): NotionDocument | null => {
+  const collection =
+    collectionData.recordMap.block && collectionData.recordMap.block[id];
+
+  if (!collection) {
+    logger.error(`document ${id} not found`);
+
+    return null;
+  }
+
+  const block = collection.value;
+  const properties = block.properties as NotionBlockProperties | undefined;
+
+  if (!properties) {
+    return null;
+  }
+
+  const fields = normalizeProperties(properties);
+
+  const { title, otherFields } = fields;
+
+  return {
+    id: collection.value.id,
+    otherFields: otherFields,
+    title,
+  };
+};
+
 export const getAllDocuments = async (): Promise<Documents> => {
   let collectionData: Await<ReturnType<typeof api.getCollectionData>>;
 
@@ -46,86 +136,9 @@ export const getAllDocuments = async (): Promise<Documents> => {
 
   const ids = collectionData.result.blockIds;
 
-  type Document = {
-    id: string;
-    title: string;
-    otherFields: { [key: string]: string };
-  };
-
-  const getDocument = (id: string): Document | null => {
-    const collection =
-      collectionData.recordMap.block && collectionData.recordMap.block[id];
-
-    if (!collection) {
-      logger.error(`document ${id} not found`);
-
-      return null;
-    }
-
-    const block = collection.value;
-    const properties = block.properties as
-      | {
-          [key: string]: Array<string> | undefined;
-        }
-      | undefined;
-
-    if (!properties) {
-      return null;
-    }
-
-    const fields = Object.entries(properties).reduce(
-      (acc, [key, value]) => {
-        const normalizedValue = value?.flat()[0];
-        if (!normalizedValue) {
-          return acc;
-        }
-
-        if (key === 'title') {
-          acc.title = normalizedValue;
-
-          return acc;
-        }
-
-        acc.otherFields[key] = normalizedValue;
-
-        return acc;
-      },
-      { otherFields: {}, title: '' } as {
-        otherFields: { [key: string]: string };
-        title: string;
-      }
-    );
-
-    const { title, otherFields } = fields;
-
-    return {
-      id: collection.value.id,
-      otherFields: otherFields,
-      title,
-    };
-  };
-
-  let normalizedDocuments: Record<string, Document> = {};
-
+  let normalizedDocuments: ReturnType<typeof normalizeDocuments> = {};
   try {
-    normalizedDocuments = ids.map(getDocument).reduce((acc, val) => {
-      if (!val) {
-        logger.info(`some document has no title or other fields`);
-        return acc;
-      }
-
-      // filter out documents we don't want to watch
-      if (
-        NOTION_COLLECTION_FILTER &&
-        !Object.values(val['otherFields']).includes(NOTION_COLLECTION_FILTER)
-      ) {
-        return acc;
-      }
-
-      acc[val.id] = val;
-
-      return acc;
-    }, {} as { [key: string]: Document });
+    normalizedDocuments = normalizeDocuments(ids, collectionData);
   } catch (e) {
     logger.error('getting normalizedDocuments failed');
   }
