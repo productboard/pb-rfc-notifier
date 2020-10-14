@@ -14,6 +14,7 @@ const MESSAGE_TEMPLATE =
 
 const bootstrapDatabase = async () => {
   const { ids } = await getAllDocuments();
+
   const database = initDatabase(ids);
 
   return database;

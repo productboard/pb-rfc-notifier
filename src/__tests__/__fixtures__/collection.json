@@ -5,6 +5,7 @@
       "c8601e50-dd0f-41b7-b571-5eadf4145483",
       "a333e20f-0201-4afb-9ae5-103797e9633e",
       "45411a68-625c-444c-9140-f7e18ec7e8fd",
+      "e3ab7bda-fba5-41c8-bb15-f2c782ad7d13",
       "not-found-should-not-die"
     ],
     "aggregationResults": [{ "type": "number", "value": 3 }],
@@ -78,6 +79,46 @@
           "last_edited_time": 1601065080000,
           "parent_id": "e3ab7bda-fba5-41c8-aa15-f2c782ad7d14",
           "parent_table": "block",
+          "alive": true,
+          "created_by_table": "notion_user",
+          "created_by_id": "6d14c720-56e7-4f49-82e5-aa39c87c9788",
+          "last_edited_by_table": "notion_user",
+          "last_edited_by_id": "6d14c720-56e7-4f49-82e5-aa39c87c9788",
+          "shard_id": 235170,
+          "space_id": "072a535b-5d56-4e3d-b068-2193c73396a2"
+        }
+      },
+      "e3ab7bda-fba5-41c8-bb15-f2c782ad7d13": {
+        "role": "editor",
+        "value": {
+          "id": "e3ab7bda-fba5-41c8-aa15-f2c782ad7d14",
+          "version": 35,
+          "type": "page",
+          "properties": {
+            "?o?E": [["24"]],
+            "it]k": [["Resolved"]],
+            "mz{`": [
+              ["‣", [["u", "032e3b4a-1781-4084-a093-974d32106ef5"]]],
+              [","],
+              ["‣", [["u", "1a5b88f5-39bb-47ed-bf4a-1e8597563cf6"]]]
+            ],
+            "neQt": [["infra"]],
+            "pb>J": [["‣", [["p", "c6a41b38-cb7f-4bb1-b1c2-6c3ef900d07e"]]]],
+            "ssMN": [
+              ["‣", [["u", "67a7af6e-fbc3-4fb5-8a34-3ea061883c7b"]]],
+              [","],
+              ["‣", [["u", "a7d48655-913a-4a3e-8f63-237353c1171f"]]],
+              [","],
+              ["‣", [["u", "4a0df0e0-bc5c-407d-9bd0-628fe2f3918a"]]]
+            ],
+            "title": [["More properties!"]]
+          },
+          "content": ["cf78efa3-a841-4947-847a-ca5a4df04232"],
+          "permissions": [{ "role": "editor", "type": "space_permission" }],
+          "created_time": 1601065020000,
+          "last_edited_time": 1601065080000,
+          "parent_id": "072a535b-5d56-4e3d-b068-2193c73396a2",
+          "parent_table": "space",
           "alive": true,
           "created_by_table": "notion_user",
           "created_by_id": "6d14c720-56e7-4f49-82e5-aa39c87c9788",
