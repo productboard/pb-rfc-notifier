@@ -5,6 +5,7 @@ import {
   NOTION_API,
   NOTION_COLLECTION,
   NOTION_COLLECTION_VIEW,
+  NOTION_COLLECTION_FILTER,
 } from './environment';
 import { initDatabase } from './database';
 import { Await, Values } from './types';
@@ -45,41 +46,86 @@ export const getAllDocuments = async (): Promise<Documents> => {
 
   const ids = collectionData.result.blockIds;
 
-  const getDocument = (id: string) => {
+  type Document = {
+    id: string;
+    title: string;
+    otherFields: { [key: string]: string };
+  };
+
+  const getDocument = (id: string): Document | null => {
     const collection =
       collectionData.recordMap.block && collectionData.recordMap.block[id];
 
     if (!collection) {
       logger.error(`document ${id} not found`);
 
-      return {
-        id: '-1',
-        title: '',
-      };
+      return null;
     }
 
     const block = collection.value;
-    const title = (block.properties as { title?: Array<string> })?.title;
+    const properties = block.properties as
+      | {
+          [key: string]: Array<string> | undefined;
+        }
+      | undefined;
+
+    if (!properties) {
+      return null;
+    }
+
+    const fields = Object.entries(properties).reduce(
+      (acc, [key, value]) => {
+        const normalizedValue = value?.flat()[0];
+        if (!normalizedValue) {
+          return acc;
+        }
+
+        if (key === 'title') {
+          acc.title = normalizedValue;
+
+          return acc;
+        }
+
+        acc.otherFields[key] = normalizedValue;
+
+        return acc;
+      },
+      { otherFields: {}, title: '' } as {
+        otherFields: { [key: string]: string };
+        title: string;
+      }
+    );
+
+    const { title, otherFields } = fields;
 
     return {
       id: collection.value.id,
-      title: title?.flat()[0] as string,
+      otherFields: otherFields,
+      title,
     };
   };
 
-  let normalizedDocuments: Record<string, ReturnType<typeof getDocument>> = {};
+  let normalizedDocuments: Record<string, Document> = {};
 
   try {
     normalizedDocuments = ids.map(getDocument).reduce((acc, val) => {
-      if (!val.title) {
-        logger.debug(`${val.id} has no title`);
+      if (!val) {
+        logger.info(`some document has no title or other fields`);
+        return acc;
+      }
+
+      // filter out documents we don't want to watch
+      if (
+        NOTION_COLLECTION_FILTER &&
+        !Object.values(val['otherFields']).includes(NOTION_COLLECTION_FILTER)
+      ) {
         return acc;
       }
 
       acc[val.id] = val;
 
       return acc;
-    }, {} as { [key: string]: ReturnType<typeof getDocument> });
+    }, {} as { [key: string]: Document });
   } catch (e) {
     logger.error('getting normalizedDocuments failed');
   }
