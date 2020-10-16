@@ -4,6 +4,7 @@ build:
     name: gcr.io/kaniko-project/executor:debug-v0.24.0
     entrypoint: ['']
   script:
+    - echo "CI_BUILDS_DIR = $CI_BUILDS_DIR"
     - echo "{\"credHelpers\":{\"843222783279.dkr.ecr.us-east-1.amazonaws.com\":\"ecr-login\"}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --cache=true
