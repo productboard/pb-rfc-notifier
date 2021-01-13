@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-export const VERSION = process.env.CI_COMMIT_SHORT_SHA || 'development';
+export const VERSION = process.env.VERSION || 'development';
 export const NOTION_BASE = process.env.NOTION_BASE;
 export const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 export const NOTION_API = process.env.NOTION_API;
