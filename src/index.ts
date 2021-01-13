@@ -7,6 +7,7 @@ import { initDatabase } from './database';
 import { schedule } from './cron';
 import { notify } from './slack';
 import { logger } from './logger';
+import { VERSION } from './environment';
 
 // $url and $title will be replaced
 const MESSAGE_TEMPLATE =
@@ -45,12 +46,12 @@ const run = async () => {
 };
 
 run()
-  .then(() => logger.info('app is running'))
-  .catch(() => logger.error('fatal error'));
+  .then(() => logger.info(`app (${VERSION}) is running`))
+  .catch((e) => logger.error(`fatal error: ${e}`));
 
 const healthMessage = {
   status: 'ok',
-  message: 'RFCNotion2Slack is running',
+  message: `RFCNotion2Slack (${VERSION}) is running`,
 };
 
 const printHealth = (): typeof healthMessage => healthMessage;
