@@ -47,7 +47,7 @@ const run = async () => {
 
 run()
   .then(() => logger.info(`app (${VERSION}) is running`))
-  .catch((e) => logger.error(`fatal error: ${e}`));
+  .catch((e: Error) => logger.error(`fatal error: ${e.message}`));
 
 const healthMessage = {
   status: 'ok',
