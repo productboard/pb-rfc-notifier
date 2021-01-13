@@ -15,6 +15,10 @@ const MESSAGE_TEMPLATE =
 const bootstrapDatabase = async () => {
   const { ids } = await getAllDocuments();
 
+  if (ids.length === 0) {
+    logger.warn('No documents in database. Probably expired token.');
+  }
+
   const database = initDatabase(ids);
 
   return database;

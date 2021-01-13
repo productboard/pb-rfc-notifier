@@ -17,3 +17,9 @@ This is prototype how to get notification that new RFC had been published to our
 1. Install dependencies `yarn`
 2. run `yarn build --watch` together with `yarn dev`
 3. profit
+
+## FAQ
+
+### How to obtain new token?
+
+Log in Notion and search for XHR request to `queryCollection` resource. In cookie there is `token_v2` which is what we need to provide as `NOTION_API`.
