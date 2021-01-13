@@ -136,6 +136,10 @@ export const getAllDocuments = async (): Promise<Documents> => {
 
   const ids = collectionData.result.blockIds;
 
+  if (ids.length === 0) {
+    logger.error('No documents in database. Probably expired token.');
+  }
+
   let normalizedDocuments: ReturnType<typeof normalizeDocuments> = {};
   try {
     normalizedDocuments = normalizeDocuments(ids, collectionData);
