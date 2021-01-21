@@ -38,6 +38,7 @@ const normalizeProperties = (properties: NotionBlockProperties) =>
   Object.entries(properties).reduce(
     (acc, [key, value]) => {
       const normalizedValue = value?.flat()[0];
+
       if (!normalizedValue) {
         return acc;
       }
@@ -58,33 +59,42 @@ const normalizeProperties = (properties: NotionBlockProperties) =>
     }
   );
 
+function isIgnored(document: NotionDocument) {
+  // filter out documents we don't want to watch for, kinda naive but it works
+  if (
+    NOTION_COLLECTION_FILTER &&
+    !Object.values(document['otherFields']).includes(NOTION_COLLECTION_FILTER)
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 const normalizeDocuments = (
   ids: NotionCollectionData['result']['blockIds'],
   collectionData: NotionCollectionData
 ) => {
-  const getDocument = getDocumentFactory(collectionData);
+  const getDocument = createGetDocument(collectionData);
 
-  return ids.map(getDocument).reduce((acc, val) => {
-    if (!val) {
-      logger.info(`some document has no title or other fields`);
-      return acc;
+  return ids.reduce((documents, id) => {
+    const document = getDocument(id);
+
+    if (!document) {
+      return documents;
     }
 
-    // filter out documents we don't want to watch for, kinda naive but it works
-    if (
-      NOTION_COLLECTION_FILTER &&
-      !Object.values(val['otherFields']).includes(NOTION_COLLECTION_FILTER)
-    ) {
-      return acc;
+    if (isIgnored(document)) {
+      return documents;
     }
 
-    acc[val.id] = val;
+    documents[document.id] = document;
 
-    return acc;
+    return documents;
   }, {} as { [key: string]: Document });
 };
 
-const getDocumentFactory = (collectionData: NotionCollectionData) => (
+const createGetDocument = (collectionData: NotionCollectionData) => (
   id: string
 ): NotionDocument | null => {
   const collection =
@@ -100,12 +110,23 @@ const getDocumentFactory = (collectionData: NotionCollectionData) => (
   const properties = block.properties as NotionBlockProperties | undefined;
 
   if (!properties) {
+    logger.info(`ignoring document ${id} as it's without properties`);
+
     return null;
   }
 
   const fields = normalizeProperties(properties);
 
   const { title, otherFields } = fields;
+
+  // ignore documents with possibly mistaken titles
+  if (title.trim().length < 3) {
+    logger.info(
+      `ignoring document ${id} because has wrong title format (<3 chars)`
+    );
+
+    return null;
+  }
 
   return {
     id: collection.value.id,
@@ -115,36 +136,25 @@ const getDocumentFactory = (collectionData: NotionCollectionData) => (
 };
 
 export const getAllDocuments = async (): Promise<Documents> => {
-  let collectionData: Await<ReturnType<typeof api.getCollectionData>>;
-
-  try {
-    collectionData = await api.getCollectionData(
-      NOTION_COLLECTION,
-      NOTION_COLLECTION_VIEW
-    );
-  } catch (e) {
-    logger.error(`notion-client failed to get data`);
-
-    throw Error('notion-client failed');
-  }
+  const collectionData: Await<ReturnType<
+    typeof api.getCollectionData
+  >> = await api.getCollectionData(NOTION_COLLECTION, NOTION_COLLECTION_VIEW);
 
   if (!collectionData.result) {
-    logger.error(`collection not found or you don't have permissions!`);
-
-    throw Error('collection not found');
+    throw Error(`collection not found or you don't have permissions`);
   }
 
   const ids = collectionData.result.blockIds;
 
   if (ids.length === 0) {
-    logger.error('No documents in database. Probably expired token.');
+    throw Error('no documents in database - probably expired token');
   }
 
   let normalizedDocuments: ReturnType<typeof normalizeDocuments> = {};
   try {
     normalizedDocuments = normalizeDocuments(ids, collectionData);
   } catch (e) {
-    logger.error('getting normalizedDocuments failed');
+    throw Error('normalizedDocuments failed');
   }
 
   return {
