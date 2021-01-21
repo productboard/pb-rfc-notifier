@@ -30,24 +30,26 @@ const sendMessage: Parameters<
     message: MESSAGE_TEMPLATE.replace('$url', url).replace('$title', title),
   });
 
-  logger.info(`notification sent for ${id}`);
+  logger.info(`notification sent for: ${title} (${id})`);
 };
 
 const run = async () => {
   const database = await bootstrapDatabase();
 
   schedule(() => {
-    void checkForNewDocument({
+    checkForNewDocument({
       database,
       getDocuments: getAllDocuments,
       callback: sendMessage,
-    });
+    }).catch((e: Error) =>
+      logger.info(`checking for new documents failed: ${e.message}`)
+    );
   });
 };
 
 run()
   .then(() => logger.info(`app (${VERSION}) is running`))
-  .catch((e: Error) => logger.error(`fatal error: ${e.message}`));
+  .catch((e: Error) => logger.error(`failed to start: ${e.message}`));
 
 const healthMessage = {
   status: 'ok',
