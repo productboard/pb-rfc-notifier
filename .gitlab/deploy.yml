@@ -1,4 +1,5 @@
 deploy:
+  image: alpine/k8s:1.14.9
   stage: deploy
   only:
     - master
@@ -8,13 +9,12 @@ deploy:
   script:
     - kubectl create namespace $KUBE_NS || true
     - helm lint ./charts/pb-rfc-notifier
-    - helm init --client-only
     - helm repo update
     - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
       --install
       --force
       --reset-values
-      --wait --timeout 300
+      --wait --timeout 300s
       --namespace $KUBE_NS
       -f ./charts/pb-rfc-notifier/values.yaml
       --set extraEnv.NOTION_BASE=$NOTION_BASE
