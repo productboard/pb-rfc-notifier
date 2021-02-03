@@ -34,11 +34,9 @@ spec:
             {{- end }}
           ports:
             - name: http
-              port: {{ .Values.service.port }}
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
             - name: metrics
-              port: 9394
               containerPort: 9394
               protocol: TCP
           livenessProbe:
