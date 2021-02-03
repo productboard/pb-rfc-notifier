@@ -9,7 +9,6 @@ deploy:
   script:
     - kubectl create namespace $KUBE_NS || true
     - helm lint ./charts/pb-rfc-notifier
-    - helm repo update
     - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
       --install
       --reset-values
