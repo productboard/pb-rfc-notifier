@@ -12,7 +12,6 @@ deploy:
     - helm repo update
     - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
       --install
-      --force
       --reset-values
       --wait --timeout 300s
       --namespace $KUBE_NS
