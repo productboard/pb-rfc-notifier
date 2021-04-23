@@ -25,12 +25,13 @@ service:
 ingress:
   enabled: true
   annotations:
-    # Reference: https://docs.traefik.io/v1.7/user-guide/kubernetes/#specifying-routing-priorities
-    kubernetes.io/ingress.class: traefik-info
-    traefik.ingress.kubernetes.io/priority: '1'
+    kubernetes.io/ingress.class: traefik-net-internal
+    ingress.kubernetes.io/ssl-redirect: "true"
+    ingress.kubernetes.io/hsts-include-subdomains: "true"
+    ingress.kubernetes.io/hsts-max-age: "315360000"
+    ingress.kubernetes.io/hsts-preload: "true"
   hosts:
-    - host: 'pb-rfc-notifier.productboard.info'
-      # internal cluster traffic runs without TLS
+    - host: 'pb-rfc-notifier.ranger.ops.productboard.net'
       port: 80
       paths: ['/']
 
