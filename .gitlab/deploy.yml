@@ -4,10 +4,9 @@ deploy:
   only:
     - master
   variables:
-    KUBE_NS: default
-  environment: production
+    KUBE_NS: platform
+  environment: ops
   script:
-    - kubectl create namespace $KUBE_NS || true
     - helm lint ./charts/pb-rfc-notifier
     - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
       --install
