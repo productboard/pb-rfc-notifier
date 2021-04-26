@@ -26,9 +26,11 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: traefik-net-internal
-    ingress.kubernetes.io/hsts-include-subdomains: "true"
-    ingress.kubernetes.io/hsts-max-age: "315360000"
-    ingress.kubernetes.io/hsts-preload: "true"
+    ingress.kubernetes.io/ssl-redirect: 'true'
+    ingress.kubernetes.io/ssl-proxy-headers: 'X-Forwarded-Proto: https'
+    ingress.kubernetes.io/hsts-include-subdomains: 'true'
+    ingress.kubernetes.io/hsts-max-age: '315360000'
+    ingress.kubernetes.io/hsts-preload: 'true'
   hosts:
     - host: 'pb-rfc-notifier.ranger.ops.productboard.net'
       port: 80
