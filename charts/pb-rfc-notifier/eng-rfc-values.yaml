@@ -12,7 +12,7 @@ image:
   pullPolicy: Always
 
 imagePullSecrets: []
-nameOverride: ''
+nameOverride: 'pb-eng-rfc-notifier'
 fullnameOverride: ''
 
 podAnnotations: { ad.datadoghq.com/tags: '{"team": "fep"}' }
@@ -32,7 +32,7 @@ ingress:
     ingress.kubernetes.io/hsts-max-age: '315360000'
     ingress.kubernetes.io/hsts-preload: 'true'
   hosts:
-    - host: 'pb-rfc-notifier.ranger.ops.productboard.net'
+    - host: 'pb-rfc-notifier.eng.ranger.ops.productboard.net'
       port: 80
       paths: ['/']
 
