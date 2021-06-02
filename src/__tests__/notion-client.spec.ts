@@ -107,6 +107,37 @@ it('should return filtered documents', async () => {
         `);
 });
 
+it('should return filtered documents based on partial filter', async () => {
+  jest.doMock('../environment', () => ({
+    NOTION_BASE: 'https://www.notion.so/swag/',
+    NOTION_COLLECTION_FILTER: 'solved',
+  }));
+
+  const { getAllDocuments } = await import('../notion-client');
+
+  void expect(getAllDocuments()).resolves.toMatchInlineSnapshot(`
+          Object {
+            "documents": Object {
+              "e3ab7bda-fba5-41c8-aa15-f2c782ad7d14": Object {
+                "id": "e3ab7bda-fba5-41c8-aa15-f2c782ad7d14",
+                "otherFields": Object {
+                  "?o?E": "24",
+                  "it]k": "Resolved",
+                  "mz{\`": "‣",
+                  "neQt": "infra",
+                  "pb>J": "‣",
+                  "ssMN": "‣",
+                },
+                "title": "More properties!",
+              },
+            },
+            "ids": Array [
+              "e3ab7bda-fba5-41c8-aa15-f2c782ad7d14",
+            ],
+          }
+        `);
+});
+
 describe('checkForNewDocument', () => {
   jest.doMock('../environment', () => ({}));
 

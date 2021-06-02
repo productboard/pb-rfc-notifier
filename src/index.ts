@@ -18,6 +18,8 @@ const bootstrapDatabase = async () => {
 
   const database = initDatabase(ids);
 
+  logger.info(`database populated by ${ids.length} documents`);
+
   return database;
 };
 

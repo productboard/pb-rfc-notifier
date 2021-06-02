@@ -63,7 +63,10 @@ function isIgnored(document: NotionDocument) {
   // filter out documents we don't want to watch for, kinda naive but it works
   if (
     NOTION_COLLECTION_FILTER &&
-    !Object.values(document['otherFields']).includes(NOTION_COLLECTION_FILTER)
+    // this matches also partial filter, eg. "📂 Open" and "Open"
+    !Object.values(document['otherFields']).find((field) =>
+      field.includes(NOTION_COLLECTION_FILTER)
+    )
   ) {
     return true;
   }
