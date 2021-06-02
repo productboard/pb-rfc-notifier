@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-pb-rfc-notifier
+  name: "grafana-{{ include "pb-rfc-notifier.name" . }}"
   namespace: monitoring
   labels:
     grafana_dashboard: "1"
 data:
-  grafana-pb-rfc-notifier.json: |-
+  grafana-{{ include "pb-rfc-notifier.name" . }}.json: |-
     {
       "annotations": {
         "list": [

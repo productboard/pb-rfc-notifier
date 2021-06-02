@@ -1,0 +1,7 @@
+nameOverride: 'pb-rfc-notifier-eng'
+
+ingress:
+  hosts:
+    - host: 'pb-rfc-notifier-eng.ranger.ops.productboard.net'
+      port: 80
+      paths: ['/']
