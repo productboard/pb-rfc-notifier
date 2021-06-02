@@ -35,7 +35,7 @@ deploy-design-rfc:
   variables:
     NOTION_COLLECTION: ee467c22-c068-435f-ac6c-407fbda32b48
     NOTION_COLLECTION_VIEW: 2fa347f5-849a-473b-acf3-2fb2f3667834
-    NOTION_COLLECTION_FILTER: '🛎 Open'
+    NOTION_COLLECTION_FILTER: 'Open'
     SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_DESIGN_RFC
   script:
     - helm lint ./charts/pb-rfc-notifier
