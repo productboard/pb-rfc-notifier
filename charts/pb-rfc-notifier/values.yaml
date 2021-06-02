@@ -1,4 +1,3 @@
-# Default values for pb-blueprint-ruby.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -12,7 +11,7 @@ image:
   pullPolicy: Always
 
 imagePullSecrets: []
-nameOverride: 'pb-eng-rfc-notifier'
+nameOverride: ''
 fullnameOverride: ''
 
 podAnnotations: { ad.datadoghq.com/tags: '{"team": "fep"}' }
@@ -31,10 +30,7 @@ ingress:
     ingress.kubernetes.io/hsts-include-subdomains: 'true'
     ingress.kubernetes.io/hsts-max-age: '315360000'
     ingress.kubernetes.io/hsts-preload: 'true'
-  hosts:
-    - host: 'pb-rfc-notifier.eng.ranger.ops.productboard.net'
-      port: 80
-      paths: ['/']
+  # hosts needs to be deep merged
 
   tls: []
   #  - secretName: chart-example-tls

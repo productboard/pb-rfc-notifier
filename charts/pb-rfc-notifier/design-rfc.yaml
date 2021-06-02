@@ -1,0 +1,5 @@
+ingress:
+  hosts:
+    - host: 'pb-rfc-notifier-design.ranger.ops.productboard.net'
+      port: 80
+      paths: ['/']

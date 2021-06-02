@@ -13,12 +13,13 @@ deploy-eng-rfc:
     NOTION_COLLECTION_FILTER: 'Open'
   script:
     - helm lint ./charts/pb-rfc-notifier
-    - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
+    - helm upgrade pb-rfc-notifier-eng ./charts/pb-rfc-notifier
       --install
       --reset-values
       --wait --timeout 300s
       --namespace $KUBE_NS
-      -f ./charts/pb-rfc-notifier/eng-rfc-values.yaml
+      -f ./charts/pb-rfc-notifier/values.yaml
+      -f ./charts/pb-rfc-notifier/eng-rfc.yaml
       --set extraEnv.NOTION_BASE=$NOTION_BASE
       --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_ENG_RFC
       --set extraEnv.NOTION_API=$NOTION_API
@@ -35,12 +36,13 @@ deploy-design-rfc:
     NOTION_COLLECTION_FILTER: '🛎 Open'
   script:
     - helm lint ./charts/pb-rfc-notifier
-    - helm upgrade pb-rfc-notifier ./charts/pb-rfc-notifier
+    - helm upgrade pb-rfc-notifier-design ./charts/pb-rfc-notifier
       --install
       --reset-values
       --wait --timeout 300s
       --namespace $KUBE_NS
-      -f ./charts/pb-rfc-notifier/design-rfc-values.yaml
+      -f ./charts/pb-rfc-notifier/values.yaml
+      -f ./charts/pb-rfc-notifier/design-rfc.yaml
       --set extraEnv.NOTION_BASE=$NOTION_BASE
       --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_DESIGN_RFC
       --set extraEnv.NOTION_API=$NOTION_API
