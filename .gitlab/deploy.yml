@@ -11,7 +11,7 @@ deploy-eng-rfc:
     NOTION_COLLECTION: 5c15d049-96d8-4b21-bbea-218b94e848c3
     NOTION_COLLECTION_VIEW: c6c785fe-787f-4916-afb4-93b6045e60ce
     NOTION_COLLECTION_FILTER: 'Open'
-    SLACK_WEBHOOK: $SLACK_WEBHOOK_URL_ENG_RFC
+    SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_ENG_RFC
   script:
     - helm lint ./charts/pb-rfc-notifier
     - helm upgrade pb-rfc-notifier-eng ./charts/pb-rfc-notifier
@@ -36,7 +36,7 @@ deploy-design-rfc:
     NOTION_COLLECTION: ee467c22-c068-435f-ac6c-407fbda32b48
     NOTION_COLLECTION_VIEW: 2fa347f5-849a-473b-acf3-2fb2f3667834
     NOTION_COLLECTION_FILTER: '🛎 Open'
-    SLACK_WEBHOOK: $SLACK_WEBHOOK_URL_DESIGN_RFC
+    SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_DESIGN_RFC
   script:
     - helm lint ./charts/pb-rfc-notifier
     - helm upgrade pb-rfc-notifier-design ./charts/pb-rfc-notifier
