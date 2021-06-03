@@ -30,7 +30,7 @@ deploy-eng-rfc:
       --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
       --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
       --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
-      --set extraEnv.MESSAGE_TEMPLATE=$MESSAGE_TEMPLATE
+      --set-string extraEnv.MESSAGE_TEMPLATE=$MESSAGE_TEMPLATE
 
 deploy-design-rfc:
   extends: .deploy-config
@@ -57,4 +57,4 @@ deploy-design-rfc:
       --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
       --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
       --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
-      --set extraEnv.MESSAGE_TEMPLATE=$MESSAGE_TEMPLATE
+      --set-string extraEnv.MESSAGE_TEMPLATE=$MESSAGE_TEMPLATE
