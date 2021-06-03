@@ -7,11 +7,7 @@ import { initDatabase } from './database';
 import { schedule } from './cron';
 import { notify } from './slack';
 import { logger } from './logger';
-import { VERSION } from './environment';
-
-// $url and $title will be replaced
-const MESSAGE_TEMPLATE =
-  'Hey everyone! Great news! New RFC is available! Check out *"<$url|$title>"* right away!';
+import { VERSION, MESSAGE_TEMPLATE } from './environment';
 
 const bootstrapDatabase = async () => {
   const { ids } = await getAllDocuments();

@@ -10,18 +10,23 @@ declare global {
       NOTION_COLLECTION: string;
       NOTION_COLLECTION_VIEW: string;
       NOTION_COLLECTION_FILTER: string;
+      MESSAGE_TEMPLATE: string;
     }
   }
 }
 
-export const VERSION = process.env.VERSION || 'development';
 export const NOTION_BASE = process.env.NOTION_BASE;
 export const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 export const NOTION_API = process.env.NOTION_API;
 export const NOTION_COLLECTION = process.env.NOTION_COLLECTION;
 export const NOTION_COLLECTION_VIEW = process.env.NOTION_COLLECTION_VIEW;
 export const NOTION_COLLECTION_FILTER =
-  process.env.NOTION_COLLECTION_FILTER || '';
+  process.env.NOTION_COLLECTION_FILTER ?? '';
+export const VERSION = process.env.VERSION ?? 'development';
+export const MESSAGE_TEMPLATE =
+  process.env.MESSAGE_TEMPLATE ??
+  // $url and $title will be replaced
+  'Hey everyone! Great news! New RFC is available! Check out *"<$url|$title>"* right away!';
 
 if (
   !NOTION_BASE ||

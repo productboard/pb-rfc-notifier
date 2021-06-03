@@ -12,6 +12,7 @@ deploy-eng-rfc:
     NOTION_COLLECTION_VIEW: c6c785fe-787f-4916-afb4-93b6045e60ce
     NOTION_COLLECTION_FILTER: 'Open'
     SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_ENG_RFC
+    MESSAGE_TEMPLATE: 'Hey everyone! Great news! New RFC is available! Check out *"<$url|$title>"* right away!';
   script:
     - helm lint ./charts/pb-rfc-notifier
     - helm upgrade pb-rfc-notifier-eng ./charts/pb-rfc-notifier
@@ -29,6 +30,7 @@ deploy-eng-rfc:
       --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
       --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
       --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
+      --set extraEnv.MESSAGE_TEMPLATE=$MESSAGE_TEMPLATE
 
 deploy-design-rfc:
   extends: .deploy-config
@@ -37,6 +39,7 @@ deploy-design-rfc:
     NOTION_COLLECTION_VIEW: f49b6251-bd28-486e-bb2c-50089800de46
     NOTION_COLLECTION_FILTER: 'Open'
     SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_DESIGN_RFC
+    MESSAGE_TEMPLATE: 'Hey everyone! Great news! New Design RFC is available! Check out *"<$url|$title>"* right away!';
   script:
     - helm lint ./charts/pb-rfc-notifier
     - helm upgrade pb-rfc-notifier-design ./charts/pb-rfc-notifier
@@ -54,3 +57,4 @@ deploy-design-rfc:
       --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
       --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
       --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
+      --set extraEnv.MESSAGE_TEMPLATE=$MESSAGE_TEMPLATE
