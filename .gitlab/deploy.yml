@@ -1,21 +1,6 @@
 .run-helm-upgrade: &run-helm-upgrade |
   function run_helm_upgrade() {
-    helm upgrade pb-rfc-notifier-$1 ./charts/pb-rfc-notifier \
-      --install \ 
-      --reset-values \
-      --wait \
-      --timeout 300s \
-      --namespace $KUBE_NS \
-      -f ./charts/pb-rfc-notifier/values.yaml \
-      -f ./charts/pb-rfc-notifier/$1-rfc.yaml \
-      --set extraEnv.NOTION_BASE=$NOTION_BASE \
-      --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL \
-      --set extraEnv.NOTION_API=$NOTION_API \
-      --set extraEnv.NOTION_COLLECTION=$NOTION_COLLECTION \
-      --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW \
-      --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER \
-      --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA \
-      --set-string extraEnv.MESSAGE_TEMPLATE="$MESSAGE_TEMPLATE" 
+    helm upgrade pb-rfc-notifier-$1 ./charts/pb-rfc-notifier --install --reset-values --wait --timeout 300s --namespace $KUBE_NS -f ./charts/pb-rfc-notifier/values.yaml -f ./charts/pb-rfc-notifier/values-$1.yaml --set extraEnv.NOTION_BASE=$NOTION_BASE --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL --set extraEnv.NOTION_API=$NOTION_API --set extraEnv.NOTION_COLLECTION=$NOTION_COLLECTION --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA --set-string extraEnv.MESSAGE_TEMPLATE="$MESSAGE_TEMPLATE"
   }
 
 .deploy-config:
@@ -47,4 +32,4 @@ deploy-design-rfc:
     SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_DESIGN_RFC
     MESSAGE_TEMPLATE: 'Hey everyone! Great news! New Design RFC is available! Check out *"<%url|%title>"* right away!'
   script:
-    - run_helm_upgrade "eng"
+    - run_helm_upgrade "design"
