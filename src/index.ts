@@ -25,7 +25,7 @@ const sendMessage: Parameters<
   const url = getURLforDocument(id);
 
   await notify({
-    message: MESSAGE_TEMPLATE.replace('$url', url).replace('$title', title),
+    message: MESSAGE_TEMPLATE.replace('%url', url).replace('%title', title),
   });
 
   logger.info(`notification sent for: ${title} (${id})`);
@@ -46,7 +46,11 @@ const run = async () => {
 };
 
 run()
-  .then(() => logger.info(`app (${VERSION}) is running`))
+  .then(() =>
+    logger.info(
+      `app (${VERSION}) is running with template: ${MESSAGE_TEMPLATE}`
+    )
+  )
   .catch((e: Error) => logger.error(`failed to start: ${e.message}`));
 
 const healthMessage = {
