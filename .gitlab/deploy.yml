@@ -1,9 +1,31 @@
+.run-helm-upgrade: &run-helm-upgrade |
+  function run_helm_upgrade() {
+    helm upgrade pb-rfc-notifier-$1 ./charts/pb-rfc-notifier
+      --install
+      --reset-values
+      --wait
+      --timeout 300s
+      --namespace $KUBE_NS
+      -f ./charts/pb-rfc-notifier/values.yaml
+      -f ./charts/pb-rfc-notifier/$1-rfc.yaml
+      --set extraEnv.NOTION_BASE=$NOTION_BASE
+      --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
+      --set extraEnv.NOTION_API=$NOTION_API
+      --set extraEnv.NOTION_COLLECTION=$NOTION_COLLECTION
+      --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
+      --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
+      --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
+      --set-string extraEnv.MESSAGE_TEMPLATE="$MESSAGE_TEMPLATE"
+  }
+
 .deploy-config:
   image: alpine/k8s:1.14.9
   stage: deploy
   only:
     - master
   environment: ops
+  before_script:
+    - *run-helm-upgrade
 
 deploy-eng-rfc:
   extends: .deploy-config
@@ -14,23 +36,7 @@ deploy-eng-rfc:
     SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_ENG_RFC
     MESSAGE_TEMPLATE: 'Hey everyone! Great news! New RFC is available! Check out *"<%url|%title>"* right away!'
   script:
-    - helm lint ./charts/pb-rfc-notifier
-    - helm upgrade pb-rfc-notifier-eng ./charts/pb-rfc-notifier
-      --install
-      --reset-values
-      --wait
-      --timeout 300s
-      --namespace $KUBE_NS
-      -f ./charts/pb-rfc-notifier/values.yaml
-      -f ./charts/pb-rfc-notifier/eng-rfc.yaml
-      --set extraEnv.NOTION_BASE=$NOTION_BASE
-      --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
-      --set extraEnv.NOTION_API=$NOTION_API
-      --set extraEnv.NOTION_COLLECTION=$NOTION_COLLECTION
-      --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
-      --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
-      --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
-      --set-string extraEnv.MESSAGE_TEMPLATE="$MESSAGE_TEMPLATE"
+    - run_helm_upgrade "eng"
 
 deploy-design-rfc:
   extends: .deploy-config
@@ -41,20 +47,4 @@ deploy-design-rfc:
     SLACK_WEBHOOK_URL: $SLACK_WEBHOOK_URL_DESIGN_RFC
     MESSAGE_TEMPLATE: 'Hey everyone! Great news! New Design RFC is available! Check out *"<%url|%title>"* right away!'
   script:
-    - helm lint ./charts/pb-rfc-notifier
-    - helm upgrade pb-rfc-notifier-design ./charts/pb-rfc-notifier
-      --install
-      --reset-values
-      --wait
-      --timeout 300s
-      --namespace $KUBE_NS
-      -f ./charts/pb-rfc-notifier/values.yaml
-      -f ./charts/pb-rfc-notifier/design-rfc.yaml
-      --set extraEnv.NOTION_BASE=$NOTION_BASE
-      --set extraEnv.SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
-      --set extraEnv.NOTION_API=$NOTION_API
-      --set extraEnv.NOTION_COLLECTION=$NOTION_COLLECTION
-      --set extraEnv.NOTION_COLLECTION_VIEW=$NOTION_COLLECTION_VIEW
-      --set extraEnv.NOTION_COLLECTION_FILTER=$NOTION_COLLECTION_FILTER
-      --set extraEnv.VERSION=$CI_COMMIT_SHORT_SHA
-      --set-string extraEnv.MESSAGE_TEMPLATE="$MESSAGE_TEMPLATE"
+    - run_helm_upgrade "design"

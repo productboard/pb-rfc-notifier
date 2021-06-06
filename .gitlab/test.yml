@@ -16,3 +16,8 @@ lint:
   script:
     - cd /usr/src/app
     - yarn lint
+
+helm-lint:
+  stage: test
+  script:
+    - helm lint ./charts/pb-rfc-notifier
